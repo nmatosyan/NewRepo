@@ -20,7 +20,6 @@ public class UsersController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] User user)
     {
-        // Хешируем пароль перед сохранением
         user.PasswordHash = PasswordHasher.HashPassword(user.PasswordHash);
 
         _context.Users.Add(user);
@@ -31,12 +30,10 @@ public class UsersController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] User login)
     {
-        // Находим пользователя по имени
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == login.Username);
         if (user == null)
             return Unauthorized();
 
-        // Сравниваем хэш пароля
         var hashedPassword = PasswordHasher.HashPassword(login.PasswordHash);
         if (user.PasswordHash != hashedPassword)
             return Unauthorized();

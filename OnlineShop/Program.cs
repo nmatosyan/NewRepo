@@ -11,7 +11,6 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // services
         builder.Services.AddScoped<IProductRepository, InMemoryProductRepository>();
         builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
         builder.Services.AddScoped<ProductService>();
@@ -22,13 +21,14 @@ public class Program
         builder.Services.AddDbContext<StoreDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        // add controllers
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
         var app = builder.Build();
+
+        app.UseMiddleware<ExceptionMiddleware>();
 
         if (app.Environment.IsDevelopment())
         {
