@@ -15,7 +15,5 @@ public class InMemoryOrderRepository : IOrderRepository
 
     public Order GetById(int id) => _orders.FirstOrDefault(o => o.Id == id);
 
-    public IEnumerable<Order> GetAllOrders() => _orders;
-
-   
+    public IEnumerable<Order> GetAllOrders() => _orders;   
 }

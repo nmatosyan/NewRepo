@@ -3,7 +3,7 @@ using OnlineShop.Core;
 
 namespace OnlineShop.BLL;
 
-public class OrderService
+public class OrderService 
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;

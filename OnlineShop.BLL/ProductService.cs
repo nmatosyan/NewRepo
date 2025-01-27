@@ -3,7 +3,7 @@ using OnlineShop.Models;
 
 namespace OnlineShop.BLL;
 
-public class ProductService
+public class ProductService : IProductRepository
 {
     private readonly IProductRepository _productRepository;
     public ProductService(IProductRepository productRepository)
@@ -24,7 +24,7 @@ public class ProductService
     public void AddProduct(Product product)
     {
         if (string.IsNullOrWhiteSpace(product.Name))
-            throw new ArgumentNullException("Product name cannot bi empty");
+            throw new ArgumentNullException("Product name cannot be empty");
         _productRepository.AddProduct(product);
     }
 
