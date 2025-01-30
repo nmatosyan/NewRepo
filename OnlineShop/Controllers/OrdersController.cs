@@ -1,35 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OnlineShop.Models;
-
+using OnlineShop.Core.Interfaces1;
+using OnlineShop.Core.Models;
 namespace OnlineShop.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {
-    private readonly StoreDbContext _context;
+    private readonly IOrderService _orderService;
 
-    public OrdersController(StoreDbContext context)
+    public OrdersController(IOrderService orderService)
     {
-        _context = context;
+        _orderService = orderService;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateOrder([FromBody] Order order)
     {
-        _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
-        return Ok(order);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var createOrder = await _orderService.CreateOrderAsync(order);
+        return Ok(createOrder);
     }
 
     [HttpGet("{userId}")]
     public async Task<IActionResult> GetOrders(int userId)
     {
-        var orders = await _context.Orders
-                                   .Where(o => o.UserId == userId)
-                                   .ToListAsync();
+        var orders = await _orderService.GetOrdersByUserIdAsync(userId);
         return Ok(orders);
     }
+
 }
 

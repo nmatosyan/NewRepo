@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
-using OnlineShop.Models;
+using OnlineShop.Core.Interfaces1;
+using OnlineShop.Core.Models;
 
 namespace OnlineShop.Controllers;
 
@@ -10,41 +8,43 @@ namespace OnlineShop.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly StoreDbContext _context;
+    private readonly IUserService _userService;
 
-    public UsersController(StoreDbContext context)
+    public UsersController(IUserService userService)
     {
-        _context = context;
+        _userService = userService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] User user)
     {
-        user.PasswordHash = PasswordHasher.HashPassword(user.PasswordHash);
+        if (!ModelState.IsValid) return BadRequest(ModelState); 
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return Ok();
+        try
+        {
+            await _userService.RegisterUserAsync(user);
+            return Ok("User registered successfully");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] User login)
     {
-        var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == login.Username);
-        if (user == null)
-            return Unauthorized();
+        if (login == null || string.IsNullOrEmpty(login.Username) || string.IsNullOrEmpty(login.PasswordHash))
+        {
+            return BadRequest("Username or password cannot be null or empty.");
+        }
 
-        var hashedPassword = PasswordHasher.HashPassword(login.PasswordHash);
-        if (user.PasswordHash != hashedPassword)
-            return Unauthorized();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        bool isValidUser = await _userService.ValidateUserAsync(login.Username, login.PasswordHash);
+        
+        if (!isValidUser) return Unauthorized("Invalid username or password");
 
         return Ok("Login successful");
     }
-
-    //private string HashPassword(string password)
-    //{
-    //    using var sha256 = SHA256.Create();
-    //    var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-    //    return Convert.ToBase64String(hashedBytes);
-    //}
 }

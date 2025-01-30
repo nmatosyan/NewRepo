@@ -1,4 +1,4 @@
-﻿namespace OnlineShop;
+﻿namespace OnlineShop.BLL;
 
 using System.Security.Cryptography;
 using System.Text;

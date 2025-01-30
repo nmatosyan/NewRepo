@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OnlineShop.BLL;
-using OnlineShop.Models; 
+using OnlineShop.Core.Interfaces1;
+using OnlineShop.Core.Models;
 
 namespace OnlineShop.Controllers;
 
@@ -11,68 +10,67 @@ namespace OnlineShop.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly ProductService _productService;
+    private readonly IProductService _productService;
+
+    public ProductsController(IProductService productService)
+    {
+        _productService = productService;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllProducts()
+    {
+        var product = await _productService.GetAllProductsAsync();
+        return Ok(product);
+    }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-    public IActionResult GetAllProducts(int id)
-    {              
-        if (id <= 0)
-        {
-            throw new ArgumentException("The product ID must be greater than zero.");
-        }
-
-        return Ok(new { Id = id, Name = "Product" });
-    }
-
-    private readonly StoreDbContext _context;
-
-    public ProductsController(StoreDbContext context) 
+    public async Task<IActionResult> GetProductById(int id)
     {
-        _context = context;
-    }
+        if (id <= 0) return BadRequest("The product id must be greater than zero");
 
-    //[HttpGet]
-    //public async Task<IActionResult> GetProducts()
-    //{
-    //    var products = await _context.Products.ToListAsync();
-    //    return Ok(products);
-    //}
+        var product = await _productService.GetProductByIdAsync(id);
+        if (product == null) return NotFound();
+        return Ok(product);
+    }
 
     [HttpPost]
     public async Task<IActionResult> AddProduct([FromBody] Product product)
     {
-        product.Id = default;
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetAllProducts), new { id = product.Id }, product);
+        if (ModelState.IsValid) return BadRequest(ModelState);
+
+        var createProduct = await _productService.AddProductAsync(product);
+        return CreatedAtAction(nameof(GetProductById), new { id = createProduct.Id }, createProduct);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, [FromBody] Product product)
     {
-        var existingProduct = await _context.Products.FindAsync(id);
-        if (existingProduct == null) return NotFound();
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        existingProduct.Name = product.Name;
-        existingProduct.Price = product.Price;     
-        existingProduct.Stock = product.Stock;
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _productService.UpdateProductAsync(id, product);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();        
+        }
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null) return NotFound();
-
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-
+        try
+        {
+            await _productService.DeleteProductAsync(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
         return NoContent();
     }
+  
 }

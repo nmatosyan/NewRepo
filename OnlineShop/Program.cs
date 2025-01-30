@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnlineShop.BLL;
-using OnlineShop.Core;
+using OnlineShop.BLL.Services;
+using OnlineShop.Core.Interfaces1;
 using OnlineShop.DAL;
 
 namespace OnlineShop;
@@ -11,10 +11,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddScoped<IProductRepository, InMemoryProductRepository>();
-        builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
-        builder.Services.AddScoped<ProductService>();
-        builder.Services.AddScoped<OrderService>();
+        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
