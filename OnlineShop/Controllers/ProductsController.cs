@@ -4,8 +4,6 @@ using OnlineShop.Core.Models;
 
 namespace OnlineShop.Controllers;
 
-//ogtagorcel service-nery cherez Interface
-
 [ApiController]
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
