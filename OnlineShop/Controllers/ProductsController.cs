@@ -37,7 +37,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddProduct([FromBody] Product product)
     {
-        if (ModelState.IsValid) return BadRequest(ModelState);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var createProduct = await _productService.AddProductAsync(product);
         return CreatedAtAction(nameof(GetProductById), new { id = createProduct.Id }, createProduct);

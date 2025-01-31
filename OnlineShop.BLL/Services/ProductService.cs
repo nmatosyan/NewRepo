@@ -21,7 +21,12 @@ public class ProductService : IProductService
 
     public async Task<Product> GetProductByIdAsync(int id)
     {
-        return await _context.Products.FindAsync(id);
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            throw new KeyNotFoundException($"Product with ID {id} not found");
+        }
+        return product;
     }
 
     public async Task<Product> AddProductAsync(Product product)
