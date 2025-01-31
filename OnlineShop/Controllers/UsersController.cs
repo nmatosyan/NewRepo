@@ -15,6 +15,23 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers()
+    {
+        var user = await _userService.GetAllUsersAsync();
+        return Ok(user);
+    }
+    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetProductById(int id)
+    {
+        if (id <= 0) return BadRequest("The user id must be greater than zero");
+
+        var user = await _userService.GetUserByIdAsync(id);
+        if (user == null) return NotFound();
+        return Ok(user);           
+    }
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] User user)
     {
@@ -47,4 +64,6 @@ public class UsersController : ControllerBase
 
         return Ok("Login successful");
     }
+
+    
 }

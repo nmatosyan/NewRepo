@@ -33,4 +33,19 @@ public class UserService : IUserService
         var hashedPassword = PasswordHasher.HashPassword(password);
         return user.PasswordHash == hashedPassword;
     }
+
+    public async Task<User> GetUserByIdAsync(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if(user == null)
+        {
+            throw new KeyNotFoundException($"User with ID {id} not found.");
+        }
+        return user;
+    }
+
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    {
+        return await _context.Users.ToListAsync();
+    }
 }
