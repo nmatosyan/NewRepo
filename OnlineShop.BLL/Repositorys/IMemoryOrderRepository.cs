@@ -1,6 +1,5 @@
 ﻿using OnlineShop.Core.Interfaces1;
 using OnlineShop.Core.Models;
-
 namespace OnlineShop.BLL.Repositorys;
 
 public class InMemoryOrderRepository : IOrderRepository

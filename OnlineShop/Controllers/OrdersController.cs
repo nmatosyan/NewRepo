@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.Interfaces1;
 using OnlineShop.Core.Models;
+using OnlineShop.Core.DTO;
 namespace OnlineShop.Controllers;
 
 [ApiController]
@@ -14,22 +15,59 @@ public class OrdersController : ControllerBase
         _orderService = orderService;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateOrder([FromBody] Order order)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var createOrder = await _orderService.CreateOrderAsync(order);
-        return Ok(createOrder);
-    }
-
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetOrders(int userId)
-    {
-        var orders = await _orderService.GetOrdersByUserIdAsync(userId);
+        var orders = await _orderService.GetOrdersAsync();
         return Ok(orders);
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Order>> GetOrder(int id)
+    {
+        var order = await _orderService.GetOrderByIdAsync(id);
 
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(order);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<Order>> CreateOrder([FromBody] CreateOrderDto createOrderDto)
+    {
+        var order = await _orderService.CreateOrderAsync(createOrderDto);
+        return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateOrder(int id, [FromBody] UpdateOrderDto updateOrderDto)
+    {
+        try
+        {
+            await _orderService.UpdateOrderAsync(id, updateOrderDto);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrder(int id)
+    {
+        try
+        {
+            await _orderService.DeleteOrderAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
 }
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineShop.Core.Models;
-
 namespace OnlineShop.DAL;
 
 public class StoreDbContext : DbContext

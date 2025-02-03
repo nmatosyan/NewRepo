@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Core.Interfaces1;
 using OnlineShop.Core.Models;
-
 namespace OnlineShop.Controllers;
 
 [ApiController]

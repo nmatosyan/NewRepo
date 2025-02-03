@@ -3,7 +3,6 @@ using OnlineShop.BLL.Repositorys;
 using OnlineShop.BLL.Services;
 using OnlineShop.Core.Interfaces1;
 using OnlineShop.DAL;
-
 namespace OnlineShop;
 
 public class Program

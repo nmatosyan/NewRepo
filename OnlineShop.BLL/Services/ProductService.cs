@@ -2,7 +2,6 @@
 using OnlineShop.Core.Interfaces1;
 using OnlineShop.Core.Models;
 using OnlineShop.DAL;
-
 namespace OnlineShop.BLL.Services;
 
 public class ProductService : IProductService

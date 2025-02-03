@@ -1,7 +1,6 @@
-﻿namespace OnlineShop.BLL;
-
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
+namespace OnlineShop.BLL;
 
 public class PasswordHasher
 {

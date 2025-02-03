@@ -1,9 +1,13 @@
-﻿using OnlineShop.Core.Models;
-
+﻿using OnlineShop.Core.DTO;
+using OnlineShop.Core.Models;
 namespace OnlineShop.Core.Interfaces1;
 
 public interface IOrderService
 {
-    Task<Order> CreateOrderAsync(Order order);
-    Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);
+    Task<IEnumerable<Order>> GetOrdersAsync();
+    Task<Order> GetOrderByIdAsync(int id);
+    Task<Order> CreateOrderAsync(CreateOrderDto createOrderDto);
+    Task UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto);
+    Task DeleteOrderAsync(int id);
 }
+
