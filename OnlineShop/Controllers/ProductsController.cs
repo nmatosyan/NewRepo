@@ -69,5 +69,4 @@ public class ProductsController : ControllerBase
         }
         return NoContent();
     }
-  
 }

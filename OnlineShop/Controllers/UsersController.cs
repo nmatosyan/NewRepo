@@ -63,6 +63,4 @@ public class UsersController : ControllerBase
 
         return Ok("Login successful");
     }
-
-    
 }

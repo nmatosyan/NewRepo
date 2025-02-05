@@ -9,7 +9,7 @@ public class InMemoryOrderRepository : IOrderRepository
     public void CreateOrder(Order order)
     {
         order.Id = _orders.Count + 1;
-        order.OrderDate = DateTime.UtcNow;
+        order.OrderDate = DateTime.Now;
         _orders.Add(order);
     }
 
@@ -24,5 +24,4 @@ public class InMemoryOrderRepository : IOrderRepository
     }
 
     public IEnumerable<Order> GetAllOrders() => _orders;
-
 }

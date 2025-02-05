@@ -13,16 +13,18 @@ public class StoreDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<OrderProduct>()
-            .HasKey(op => new { op.OrderId, op.ProductId }); 
+            .HasKey(op => new { op.OrderId, op.ProductId });
 
         modelBuilder.Entity<OrderProduct>()
-            .HasOne(op => op.Order)
-            .WithMany(o => o.OrderProducts)
-            .HasForeignKey(op => op.OrderId);
+             .HasOne(op => op.Order)
+             .WithMany(o => o.OrderProducts)
+             .HasForeignKey(op => op.OrderId)
+             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<OrderProduct>()
             .HasOne(op => op.Product)
             .WithMany(p => p.OrderProducts)
-            .HasForeignKey(op => op.ProductId);
+            .HasForeignKey(op => op.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -19,7 +19,6 @@ public class ExceptionMiddleware
         {
             await HandleExceptionAsync(context, ex);
         }
-
     }
 
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
@@ -42,6 +41,4 @@ public class ExceptionMiddleware
 
         return context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
     }
-
-
 }

@@ -19,21 +19,37 @@ public class OrderService : IOrderService
         var order = new Order
         {
             UserId = createOrderDto.UserId,
-            OrderDate = DateTime.Now
+            OrderDate = DateTime.UtcNow
         };
 
-        foreach(var productDto in createOrderDto.Products)
+        foreach (var productDto in createOrderDto.Products)
         {
+            var product = await _context.Products.FindAsync(productDto.ProductId);
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {productDto.ProductId} not faund.");
+            }
+
             var orderProduct = new OrderProduct
             {
                 ProductId = productDto.ProductId,
-                stock = productDto.Stock,
+                Product = product,
+                Quantity = productDto.Quantity,
             };
             order.OrderProducts.Add(orderProduct);
         }
 
         _context.Orders.Add(order);
-        await _context.SaveChangesAsync();
+        
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception($"Excaption saving in database: {ex.InnerException?.Message}", ex);
+        }
+
         return order;
     }
 
@@ -59,10 +75,10 @@ public class OrderService : IOrderService
 
     public async Task<Order> GetOrderByIdAsync(int id)
     {
-            var order = await _context.Orders
-           .Include(o => o.OrderProducts)
-           .ThenInclude(op => op.Product)
-           .FirstOrDefaultAsync(o => o.Id == id);
+        var order = await _context.Orders
+       .Include(o => o.OrderProducts)
+       .ThenInclude(op => op.Product)
+       .FirstOrDefaultAsync(o => o.Id == id);
         if (id <= 0)
         {
             throw new KeyNotFoundException("Id most be greater than zero");
@@ -80,8 +96,8 @@ public class OrderService : IOrderService
     {
         var order = await _context.Orders
             .Include(o => o.OrderProducts)
-            .FirstOrDefaultAsync (o => o.Id == id);
-
+            .FirstOrDefaultAsync(o => o.Id == id);
+           
         if (order == null)
         {
             throw new KeyNotFoundException("Order not found");
@@ -94,12 +110,12 @@ public class OrderService : IOrderService
             var orderProduct = new OrderProduct
             {
                 ProductId = productDto.ProductId,
-                stock = productDto.Stock,
+                Quantity = productDto.Quantity,
             };
             order.OrderProducts.Add(orderProduct);
         }
 
         await _context.SaveChangesAsync();
     }
-
 }
+

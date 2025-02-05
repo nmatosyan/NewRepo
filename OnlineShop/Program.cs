@@ -17,10 +17,8 @@ public class Program
         builder.Services.AddScoped<IProductRepository, InMemoryProductRepository>();
         builder.Services.AddScoped<IOrderRepository, InMemoryOrderRepository>();
 
-        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
         builder.Services.AddDbContext<StoreDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddControllers();
 
@@ -36,7 +34,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
 

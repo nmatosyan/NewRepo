@@ -15,7 +15,7 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
-        return await _context.Products.ToListAsync();
+        return await _context.Products.Include(p => p.OrderProducts).ToListAsync();
     }
 
     public async Task<Product> GetProductByIdAsync(int id)
@@ -53,5 +53,4 @@ public class ProductService : IProductService
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
     }
-
 }
