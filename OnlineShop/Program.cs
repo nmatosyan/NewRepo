@@ -38,6 +38,21 @@ public class Program
         app.UseAuthorization();
         app.MapControllers();
 
+        app.UseExceptionHandler(errorApp =>
+        {
+            errorApp.Run(async context =>
+            {
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+
+                var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+                if (error != null)
+                {
+                    await context.Response.WriteAsync($"{{\"error\": \"{error.Error.Message}\"}}");
+                }
+            });
+        });
+
         app.Run();
     }
 }

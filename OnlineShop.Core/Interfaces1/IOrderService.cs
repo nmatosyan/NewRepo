@@ -10,4 +10,3 @@ public interface IOrderService
     Task UpdateOrderAsync(int id, UpdateOrderDto updateOrderDto);
     Task DeleteOrderAsync(int id);
 }
-
