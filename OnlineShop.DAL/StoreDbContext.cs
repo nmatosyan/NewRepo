@@ -16,15 +16,13 @@ public class StoreDbContext : DbContext
             .HasKey(op => new { op.OrderId, op.ProductId });
 
         modelBuilder.Entity<OrderProduct>()
-             .HasOne(op => op.Order)
-             .WithMany(o => o.OrderProducts)
-             .HasForeignKey(op => op.OrderId)
-             .OnDelete(DeleteBehavior.Cascade);
+            .HasOne(op => op.Order)
+            .WithMany(o => o.OrderProducts)
+            .HasForeignKey(op => op.OrderId);
 
         modelBuilder.Entity<OrderProduct>()
             .HasOne(op => op.Product)
             .WithMany(p => p.OrderProducts)
-            .HasForeignKey(op => op.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(op => op.ProductId);
     }
 }

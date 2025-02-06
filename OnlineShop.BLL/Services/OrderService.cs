@@ -66,7 +66,7 @@ public class OrderService : IOrderService
     }
 
     public async Task<IEnumerable<Order>> GetOrdersAsync()
-    {
+    {  
         return await _context.Orders
             .Include(o => o.OrderProducts)
             .ThenInclude(op => op.Product)
@@ -83,7 +83,7 @@ public class OrderService : IOrderService
         {
             throw new KeyNotFoundException("Id most be greater than zero");
         }
-
+                                                                                                                      
         if (order == null)
         {
             throw new KeyNotFoundException("Order not found");
